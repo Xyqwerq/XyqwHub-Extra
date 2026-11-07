@@ -1,4 +1,4 @@
--- ========== XyqwHub | EXTRA MODE (Safe Shell + Dock) ==========
+-- ========== XyqwHub | EXTRA MODE (Safe Shell) ==========
 local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -39,6 +39,11 @@ local function SafeLoadstring(url)
     return loadstring(code)()
 end
 
+-- ДЕТЕКТОР КИКА (Без BindToClose)
+pcall(function() 
+    if writefile then writefile("XyqwHub/Logs/session.txt", "active") end 
+end)
+
 -- СКРЫТЫЙ GUI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "Chat_" .. math.random(100000, 999999)
@@ -53,7 +58,7 @@ if not success or not screenGui.Parent then
     screenGui.Parent = CoreGui
 end
 
--- ========== DOCK КНОПКА ==========
+-- DOCK КНОПКА
 local dockButton = Instance.new("TextButton")
 dockButton.Size = UDim2.new(0, 80, 0, 30)
 dockButton.Position = UDim2.new(0.5, -40, 0.05, 42)
@@ -77,7 +82,7 @@ mainFrame.BorderColor3 = RED_MAIN
 mainFrame.Active = true
 mainFrame.Parent = screenGui
 
--- ФУНКЦИИ ОТКРЫТИЯ/ЗАКРЫТИЯ
+-- ФУНКЦИИ
 local function OpenGui()
     if mainFrame.Visible then return end
     mainFrame.Visible = true
@@ -131,7 +136,7 @@ copyLogsBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
--- Кнопка X (Теперь сворачивает)
+-- Кнопка X
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 30, 1, 0)
 closeBtn.Position = UDim2.new(1, -30, 0, 0)
@@ -262,5 +267,29 @@ for _, data in ipairs(Scripts) do
         end)
     end)
 end
+
+-- Кнопка Destroy (с удалением сессии)
+local destroyBtn = Instance.new("TextButton")
+destroyBtn.Size = UDim2.new(1, -10, 0, 32)
+destroyBtn.Position = UDim2.new(0, 5, 0, yPos)
+destroyBtn.BackgroundColor3 = RED_DARK
+destroyBtn.TextColor3 = RED_MAIN
+destroyBtn.Text = "Destroy XyqwHub"
+destroyBtn.Font = Enum.Font.GothamBold
+destroyBtn.TextSize = 14
+destroyBtn.BorderSizePixel = 2
+destroyBtn.BorderColor3 = RED_MAIN
+destroyBtn.Parent = scroll
+yPos = yPos + 36
+
+destroyBtn.MouseButton1Click:Connect(function()
+    ShowRobloxNotification("XyqwHub Destroyed!", 2)
+    pcall(function() 
+        if delfile then delfile("XyqwHub/Logs/session.txt") end 
+    end)
+    screenGui:Destroy()
+end)
+
+scroll.CanvasSize = UDim2.new(0, 0, 0, yPos + 20)
 
 Notify("Extra Mode Loaded! Safe Shell Active.", 5)
